@@ -62,7 +62,7 @@ public class RPGMain {
             }
             if( command == COMMAND_BATTLE ){
                  //たたかう
-                if( !battle() ){
+                if( !battle(sc) ){
                      break;
                 }
             }else if( command == COMMAND_RECOVERY){
@@ -136,15 +136,25 @@ public class RPGMain {
      * 
      *  バトル継続するかのフラグ true：継続する false：バトル終了
      */
-    private boolean battle(){
+    private boolean battle(Scanner sc){
         //どのモンスターに攻撃するかを決定する
-        Random r = new Random();
         Monster monster = null;
+
+        //モンスター選択
+        System.out.println("倒したいモンスターを選んでください！");
+        System.out.println("上から1～3で数字で答えてください");
+        int index = sc.nextInt();
+        while(!checkIndex(index)){
+            System.out.println("数字は1～3の間から選んでください");
+            index = sc.nextInt();
+        }
+        monster = monsters[index];
         //モンスター存在確認
-        do{
-            int index = r.nextInt(3);
+        while( !monster.isThere() ){
+            System.out.printf("%sはすでにいません。もう一度選んでください\n",monster.getName());
+            index = sc.nextInt();
             monster = monsters[index];
-        }while( !monster.isThere() );
+        }
 
         //主人公→モンスターへ攻撃！
         braver.attack(monster);
@@ -190,5 +200,9 @@ public class RPGMain {
             }
         }
         return isNotThereMonster;
+    }
+
+    private boolean checkIndex(int index){
+        return (1 <= index && index <= 3)? true : false;
     }
 }
